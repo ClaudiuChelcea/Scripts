@@ -10,5 +10,6 @@ If the two files don`t match, the displayed message will be "No matches were fou
 If the two files do match, the similarity percentage between the two files will be displayed.
 
 Warning:
-To be able to use this script, you *MUST* have the perl language installed and also to have the "mos.pl"
+1. To be able to use this script, you *MUST* have the perl language installed and also to have the "mos.pl"
 checker installed in this location on your linux machine: ~/MOS/moss.pl
+2. To be able to execute the script, you must have executable and read permissions on it. Use command: chmod +rx mos_sh
