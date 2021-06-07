@@ -44,12 +44,12 @@ then
 	exit -1
 else
 	# Check extension
-	EXTENSION_1=$(echo $1 | cut -d"." -f2)
-	EXTENSION_2=$(echo $2 | cut -d"." -f2)
+	EXTENSION_1=$(basename $FIRST_FILE | cut -d"." -f2)
+	EXTENSION_2=$(basename $SECOND_FILE | cut -d"." -f2)
 
 	if [[ $EXTENSION_1 != $FILES_EXTENSION || $EXTENSION_2 != $FILES_EXTENSION || $EXTENSION_1 !=  $EXTENSION_2 ]]
 	then
-		echo "Wrong files! Not all extensions match with" $FILES_EXTENSION!
+		echo "Wrong files! Not all extensions match with" \'.$FILES_EXTENSION\' extension!
 		exit -1
 	else
 		# If the extension is correct, execute MOS
