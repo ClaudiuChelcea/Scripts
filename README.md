@@ -1,2 +1,4 @@
 # Bash-Scripts
-Useful bash scripts with specific tasks
+# Chelcea Claudiu-Marian
+
+This repository contains my scripts used for different automation tasks.
