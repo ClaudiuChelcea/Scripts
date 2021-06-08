@@ -21,6 +21,6 @@ Main folder  -> Google sheets template to be customized and sent as PDF
 			 ------------> Folder that will hold temporary files (EMPTY)
 			 ------------> Folder that will hold the PDF files (EMPTY)
 			 
-			 			  * The PDF files in the PDF folder will be sent automatically. *
-			 		      * You don't have to interact with these two folders. 			*
+			 		      * The PDF files in the PDF folder will be sent automatically. *
+			 		      * You don't have to interact with these two folders.          *
 
