@@ -1,0 +1,15 @@
+This script checks and displays how similar two homeworks are one to another by a percentage.
+
+Usage: ./moss_sh <extension> <file_1> <file_2>.
+
+The script checks if the number of files is correct, if the file extension inserted exists (and if not,
+it will choose the C language by default) and that the extension of the two files match.
+
+Output:
+If the two files don`t match, the displayed message will be "No matches were found in your submission.".
+If the two files do match, the similarity percentage between the two files will be displayed.
+
+Warning:
+1. To be able to use this script, you *MUST* have the perl language installed and also to have the "moss.pl"
+checker installed in this location on your linux machine: ~/MOS/moss.pl
+2. To be able to execute the script, you must have executable and read permissions on it. Use command: chmod +rx moss_sh
