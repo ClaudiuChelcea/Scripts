@@ -2,7 +2,7 @@
 var PDF_FOLDER_ID = "1OiCzqoHChrBoPKBo2n8rf-xhpc71S86G";
 var TMP_FOLDER_ID = "11mtvVbt4qNUmfWK-zlZHE0W60O14aBB5";
 var TEMPLATE_DOCS_FILE_ID = "15tgDLDq-Z75F_T6el2JJxZio7VTq5W0cEGkmFrqgR8k";
-var sheet_name = "Foaie1";
+var sheet_name = "Sheet1";
 var FIRST_NAME = 2;
 var SECOND_NAME = 3;
 var email_position = 7;
@@ -197,6 +197,8 @@ function count_duplicate(spreadsheet, participant_row)
   return duplicates;
 }
 
+
+// Add the command to the Google Sheets's UI
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Create PDFs in drive').addItem('Create PDFs in drive','main').addToUi();
 }
