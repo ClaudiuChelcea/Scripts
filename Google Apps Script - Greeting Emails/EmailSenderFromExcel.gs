@@ -1,9 +1,20 @@
-// Excel fields position counting from 1
+// Excel fields columns counting from 1
 var email_position = 7;
 var firstname_position = 2;
 var lastname_position = 3;
 var yesno_position = 28;
-var sheet_name="Sheet1";
+var sheet_name="Test";
+
+// DOCS ID - go to drive -> select document -> get link -> get the link between /d/.../view? -> we need what`s in the '...'
+// PDF
+var TERMS_AND_CONDITIONS_ID = "1mszwXnF5Aet024BDSN5n8SRJhoeo7gya";
+// IMAGES
+var IMAGE_1_ID = "1k2LrD3heWdqNe1Yzo7ls12suVDjKmjVL";
+var IMAGE_2_ID = "1TWsaebwhSj3rL6CwxgTPfvt1DTpVUlyN";
+
+// Email
+var EMAIL_SUBJECT = "Email subject";
+// Please modify the body yourself in HTML code, LINE 170
 
 
 // Main function
@@ -22,9 +33,9 @@ function sendEmail() {
   }
 
   // Get attachments                    // File id from drive
-  var pdf1 = DriveApp.getFileById("1mszwXnFfdsfdsfds024BDSN5n8SRJhoeo7gya");
-  var img1 =  DriveApp.getFileById("1TWsaebwhSj3dsfdsfdsfxgTPfvt1DTpVUlyN");
-  var img2 = DriveApp.getFileById("1k2LrD3hesdfsdf1Yzo7ls12suVDjKmjVL");
+  var pdf1 = DriveApp.getFileById(TERMS_AND_CONDITIONS_ID);
+  var img1 =  DriveApp.getFileById(IMAGE_1_ID);
+  var img2 = DriveApp.getFileById(IMAGE_2_ID);
 
   // SEND AN EMAIL TO EVERY PARTICIPANT
   for(var participant_row = 2; participant_row <= last_row; ++participant_row) {
@@ -114,7 +125,7 @@ function check_already_sent(spreadsheet, participant_row) {
 
 // Create email subject
 function get_subject() {
-  return "Email subject";
+  return EMAIL_SUBJECT;
 }
 
 
