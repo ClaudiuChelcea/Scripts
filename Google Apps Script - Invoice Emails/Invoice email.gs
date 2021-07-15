@@ -1,8 +1,11 @@
 // Global variables
-var PDF_FOLDER_ID = "1OiCzqoHChrBoPKBo2n8rf-xhpc71S86G";
-var TMP_FOLDER_ID = "11mtvVbt4qNUmfWK-zlZHE0W60O14aBB5";
-var TEMPLATE_DOCS_FILE_ID = "15tgDLDq-Z75F_T6el2JJxZio7VTq5W0cEGkmFrqgR8k";
-var sheet_name = "Sheet1";
+// For anything with _ID, go to drive, "Get link" and get the link between /d/...?view. We need what`s in the the '...'.
+var PDF_FOLDER_ID = "18ZzQfaU0YxLZ5XrxQZOGYQ_GWx8TyNxs"; // Folder to save PDFs, mandatory - they will be automatically sent, but we need to save them
+var TMP_FOLDER_ID = "14MW3KBShpu3ufGm8GIkRqnG5HeZ1NPj6"; // Folder to save TMP files, mandatory - they will be automatically sent, but we need to save them
+var TEMPLATE_DOCS_FILE_ID = "1UbEriXT6176xUKClGSdU6uG9W3zV7jl9"; // Docs file to create custom invoice from
+var sheet_name = "Test"; // The sheet name from the opened excel
+
+// Excel column number for these items
 var FIRST_NAME = 2;
 var SECOND_NAME = 3;
 var email_position = 7;
@@ -14,6 +17,19 @@ var PARTICIPANT_ID = 29;
 var yesno_position = 30;
 var CURRENT_DATE = 31;
 
+// Images or logos
+var IMAGE_1_ID = "1TWsaebwhSj3rL6CwxgTPfvt1DTpVUlyN";
+var IMAGE_2_ID = "1k2LrD3heWdqNe1Yzo7ls12suVDjKmjVL";
+
+// Email content
+var EMAIL_SUBJECT = "Invoice Email";
+
+
+/*
+  * Attention! *
+  Keep the excel file clean! Have no extra rows! No side comments (no extra text in any cell, you can have comments of course)
+  You still have to modify the get_body(..) function!
+*/
 
 // Main function
 function main()
@@ -26,12 +42,11 @@ function main()
   var last_row = spreadsheet.getLastRow();
 
   // Get images
-  var img1 =  DriveApp.getFileById("1eDKYrVrx4jHjjIfxYCmku2Xz65VYR1nF");
-  var img2 = DriveApp.getFileById("13TBuhuBSZCAj9B3nx-TEJHLEQt0R92mO");
+  var img1 =  DriveApp.getFileById(IMAGE_1_ID);
+  var img2 = DriveApp.getFileById(IMAGE_2_ID);
 
   // Generate PDF for every participant
   for(var participant_row = 2; participant_row <= last_row; ++participant_row) {
-  
     // Check if we didn't already send an email to that person
     if(check_already_sent(spreadsheet, participant_row) == 1) {
         continue;
@@ -41,8 +56,7 @@ function main()
     if(participant_row < last_row && get_email(spreadsheet, participant_row).localeCompare(get_email(spreadsheet,participant_row+1)) == 0)
       continue;
 
-    // Generate PDF and send an email with the generated PDF and the create body in the
-    // get_body function
+    // Generate PDF
     generatePDF_sendEmail(spreadsheet, participant_row, img1, img2);
 
     // Mark the person as someone who has received the email to not receive another one
@@ -64,10 +78,9 @@ function get_email(spreadsheet, participant_row) {
   return spreadsheet.getRange(participant_row, email_position).getValue();
 }
 
-
 // Create email subject
 function get_subject() {
-  return "JE Europe Summer Conference 2021 Payment Details + Invoice";
+  return EMAIL_SUBJECT;
 }
 
 
@@ -92,7 +105,6 @@ function get_name(spreadsheet, participant_row) {
 }
 
 
-// Convert DOCX to Google Docs
 function convertDocx(id, file_name) {
   // Using the normal drive service to get the blob (binary data)
   const docx = DriveApp.getFileById(id);
@@ -101,20 +113,20 @@ function convertDocx(id, file_name) {
   // Creating a new file
   const newDoc = Drive.newFile();
 
-  // Set the title
+  // Setting the title
   newDoc.title = file_name;
 
-  // Convert the DOCX to Google Docs
+  // Converting the docx file to GDoc
   const newGDoc = Drive.Files.insert(newDoc, blob, {convert:true});
 
-  // Return the id of the new file
+  // Return the new id
   return newGDoc.id;
 }
 
 
-// Create email body
+// Create email body (HMTL)
 function get_body(NAME) {
-  return "Dear " + NAME + "More HTML email body... <br><br><img src=\"cid:sampleImage\" width=125 height=125><img src=\"cid:sampleImage2\" width=125 height=125>";
+  return "Dear " + NAME +",<br><br>Enclosed you will find the payment request. Please pay the participation fee within 7 working days in order to confirm your participation.<br> Your participation can only be fixed against payment.<br><br>Once your transfer has been done, please send us a justification of the same (bank document scanned, print-screen...) to our email<br>INSERT_COMPANY_EMAIL@gmail.com with the following subject: \"Participation fee Event_NAME - " +  NAME + "\".<br><br>We will process all requests for collective invoices in the upcoming days<br>An event guide will be sent to you prior to the event to guarantee a pleasant participation.<br><br>For further information please visit our website https::randomWEBSITE.com.<br><br>If you have any questions, please do not hesitate to contact us via email at INSERT_COMPANY_EMAIL@gmail.com.<br><br>Looking forward to meeting you very soon,<br><br>Kind regards,<br>Company Name <br><br><img src=\"cid:sampleImage\" width=125 height=125><img src=\"cid:sampleImage2\" width=125 height=125>";
 }
 
 
@@ -197,8 +209,6 @@ function count_duplicate(spreadsheet, participant_row)
   return duplicates;
 }
 
-
-// Add the command to the Google Sheets's UI
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Create PDFs in drive').addItem('Create PDFs in drive','main').addToUi();
 }
