@@ -1,5 +1,5 @@
 // Global variables
-// For anything with _ID, go to drive, "Get link" and get the link between /d/...?view. We need what`s in the the '...'.
+// For anything with _ID, go to drive, "Get link" and get the link between /d/.../view?. We need what`s in the the '...'.
 var PDF_FOLDER_ID = "18ZzQfaU0YxLZ5XrxQZOGYQ_GWx8TyNxs"; // Folder to save PDFs, mandatory - they will be automatically sent, but we need to save them
 var TMP_FOLDER_ID = "14MW3KBShpu3ufGm8GIkRqnG5HeZ1NPj6"; // Folder to save TMP files, mandatory - they will be automatically sent, but we need to save them
 var TEMPLATE_DOCS_FILE_ID = "1UbEriXT6176xUKClGSdU6uG9W3zV7jl9"; // Docs file to create custom invoice from
