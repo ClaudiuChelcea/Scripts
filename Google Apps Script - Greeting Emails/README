@@ -1,4 +1,4 @@
-This script sends a customized email to all persons in an excel sheet generated,
+This script sends a customized email to all persons in an excel sheet,
 also attaching two photos and one PDF file.
 
 This script is easily customizable for your own needs, as you only need to change the files ids, the
