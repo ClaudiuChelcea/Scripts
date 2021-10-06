@@ -55,8 +55,10 @@ function sendEmail() {
       Logger.log("Status not finished for " + get_name(spreadsheet, participant_row) + "!");
       count_end = count_end + 1;
       if(count_end >= 3)
+      {
         break;
-        
+        Logger.log("Task finished! Add more entries to the excel sheet or finish the aproval / denial of the current ones before continuing!");
+      } 
       continue;
     }
 
