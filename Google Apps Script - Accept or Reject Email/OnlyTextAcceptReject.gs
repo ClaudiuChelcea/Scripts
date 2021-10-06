@@ -20,6 +20,7 @@ function sendEmail() {
 
   // GET THE INDEX OF THE LAST ROW
   var last_row = spreadsheet.getLastRow();
+  var count_end = 0;
 
   // Check if we can still send emails today
   if(check_emails_status() == 1) {
@@ -52,6 +53,10 @@ function sendEmail() {
     else
     {
       Logger.log("Status not finished for " + get_name(spreadsheet, participant_row) + "!");
+      count_end = count_end + 1;
+      if(count_end >= 3)
+        break;
+        
       continue;
     }
 
@@ -64,7 +69,6 @@ function sendEmail() {
         var get_value = spreadsheet.getRange(participant_row,yesno_position).getValue();
         spreadsheet.getRange(participant_row - i, yesno_position).setValue(get_value);
       }
-
   } // end loop
 }
 
