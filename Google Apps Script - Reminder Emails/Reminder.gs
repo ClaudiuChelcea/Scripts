@@ -47,7 +47,13 @@ function sendEmail() {
 
     // Send the emails
     if(spreadsheet.getRange(participant_row, status).getValue().toString().localeCompare("APROBAT") == 0)
-      send_reminder(spreadsheet, participant_row);
+    {
+      if(spreadsheet.getRange(participant_row, programat_cand_cell).getValue().toString().localeCompare("")==0)
+        continue;
+      else
+        send_reminder(spreadsheet, participant_row);
+        
+    }
     else if(spreadsheet.getRange(participant_row, status).getValue().toString().localeCompare("REFUZAT") == 0)
     {
       spreadsheet.getRange(participant_row, yesno_position).setValue("YES");
@@ -169,5 +175,5 @@ function get_programare(spreadsheet, participant_row) {
 
 // Create email body
 function get_reminder_body(NAME, PROGRAMARE) {
-  return "Bună, " + NAME + "! 👋<br><br>Ne bucurăm pentru interesul tău pentru BOS și garantăm că o să ai o studenție de succes alături de noi, de comunitatea noastră și de lucrurile pe care o să le înveți aici! 🤩<br><br>Încă o dată, felicitări pentru trecerea în etapa următoare și anume interviurile de grup! 🥳<br><br>Cum ți-a fost povestit și la telefon, interviul de grup este doar un joculeț în care să ne putem cunoaște mai bine, așa că stai fără grijă!<br><br>Revenim către tine cu link-ul de ZOOM: <br><br>Te rugăm să fii prezent/ă pe PC / laptop în intervalul " + PROGRAMARE + " ,interval stabilit telefonic cu tine.<br>Dacă au apărut oricare schimbări de program și ai nevoie de o reprogramare, nu ezita să dai un reply la acest email.<br><br>Noi deabia așteptăm să te cunoaștem!<br><br><b>No strangers here! Only friends you've never met! 💚<\/b>";
+  return "Bună, " + NAME + "! 👋<br><br>Ne bucurăm pentru interesul tău pentru BOS și garantăm că o să ai o studenție de succes alături de noi, de comunitatea noastră și de lucrurile pe care o să le înveți aici! 🤩<br><br>Încă o dată, felicitări pentru trecerea în etapa următoare și anume interviurile de grup! 🥳<br><br>Cum ți-a fost povestit și la telefon, interviul de grup este doar un joculeț în care să ne putem cunoaște mai bine, așa că stai fără grijă!<br><br>Revenim către tine cu link-ul de ZOOM: https:\/\/zoom.us\/j\/97169866074?pwd=a0tZR2sxTFMwVk1ja1ZxN1E1d0x1QT09.<br><br>Te rugăm să fii prezent/ă pe PC / laptop în intervalul " + PROGRAMARE + ", interval stabilit telefonic cu tine.<br>Dacă au apărut oricare schimbări de program și ai nevoie de o reprogramare, nu ezita să dai un reply la acest email.<br><br>Noi de abia așteptăm să te cunoaștem!<br><br><b>No strangers here! Only friends you've never met! 💚<\/b>";
 }
