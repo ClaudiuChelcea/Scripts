@@ -1,0 +1,18 @@
+#!/bin/bash
+
+input="/home/student/tema2/task0/conexiune_internet.txt"
+
+if [[ ! -f $input ]]
+then
+	echo "Fisierul \"$input\" nu exista!"
+	exit 1
+fi
+
+while read -r line
+do
+	cat $input | grep inet > /dev/null
+	if [[ $? -ne 0 ]]
+	then
+		echo "Output incorect!"
+	fi
+done < "$input"

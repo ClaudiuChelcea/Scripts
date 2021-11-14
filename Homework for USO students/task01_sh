@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# verifica existenta serverului
+input="/home/student/tema2/task0/conexiune_server.txt"
+
+if [[ ! -f $input ]]
+then
+	echo "Fisierul \"$input\" nu exista!"
+	exit 1
+fi
+
+# verifica numarul de linii
+if [[ $(cat $input | wc -l) -ne 13 ]]
+then
+	echo "Numar de pachete trimise insuficient!"
+	exit 1
+fi
+
+# verifica ca s-a folosit ping
+cat $input | grep "packets transmitted" > /dev/null
+
+if [[ $? -ne 0 ]]
+then
+	echo "Nu am sesizat trimiterea pachetelor! Incearca in alt mod!"
+	exit 1
+fi
+
+# verifica timpul
+timp=$(cat $input | grep time | cut -d " " -f10)
+timp_int=${timp::-2}
+
+if [[ $timp_int -le 27000 || $timp_int -gt 30000 ]]
+then
+	echo "Interval pentru transmiterea pachetelor gresit!"
+	exit 1
+fi
+
+cat $input | grep "8.8.8.8" > /dev/null
+if [[ $? -ne 0 ]]
+then
+	echo "Adresa DNS gresita!"
+	exit 1
+fi
