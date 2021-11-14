@@ -1,1 +1,1 @@
-cat '/home/student/tema2/task1/conexiune_web.txt' | grep "google" > /dev/null;if [[ $? -ne 0 ]];then echo 1;fi
+cat '/home/student/tema2/task1/conexiune_web.txt' | grep "google" > /dev/null;if [[ $? -ne 0 ]];then echo 1;else echo 0;fi

@@ -1,1 +1,1 @@
-if [[ $(cat '/home/student/tema2/task1/conexiune_web.txt' | wc -l) -ne 10 ]]; then echo 1;fi
+if [[ $(cat '/home/student/tema2/task1/conexiune_web.txt' | wc -l) -ne 10 ]]; then echo 1;else echo 0;fi

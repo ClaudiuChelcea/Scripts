@@ -1,1 +1,1 @@
-if [[ $(cat '/home/student/tema2/task2/USO-TEMA-2/Makefile' | grep 'Test.c' | wc -l) -ge 2 ]]; then echo 1;fi
+if [[ $(cat '/home/student/tema2/task2/USO-TEMA-2/Makefile' | grep 'Test.c' | wc -l) -ge 2 ]]; then echo 1;else echo 0;fi
