@@ -1,1 +1,1 @@
-location=$(pwd);cat Makefile | grep 'o Test' &> /dev/null; if [[ $? -ne 0 ]]; then echo 1; else echo 0;fi;cd $(location)
+location=$(pwd);cat Makefile | grep 'o Test' &> /dev/null; if [[ $? -ne 0 ]]; then echo 1; else echo 0;fi;cd $location

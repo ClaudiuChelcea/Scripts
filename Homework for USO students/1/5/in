@@ -1,1 +1,1 @@
-cat 'home/student/tema2/task1/conexiune_server.txt' | grep "packets transmitted" > /dev/null; if [[ $? -ne 0 ]]; then echo 1;fi
+cat '/home/student/tema2/task1/conexiune_server.txt' | grep "packets transmitted" > /dev/null; if [[ $? -ne 0 ]]; then echo 1;fi

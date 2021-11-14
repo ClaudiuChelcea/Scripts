@@ -1,1 +1,1 @@
-diff -q /home/student/tema2/task2/USO-TEMA-2/ USO-TEMA-2/ &> /dev/null; echo $?
+start=$(pwd);cd /home/student/tema2/task2/;mkdir new;cd new;git clone -q https://github.com/ClaudiuChelcea/USO-TEMA-2;cd USO-TEMA-2;tar -xf USO-TEMA-2;rm USO-TEMA-2;cd ..;diff -q /home/student/tema2/task2/USO-TEMA-2/ /home/student/tema2/task2/new/USO-TEMA-2/ &> /dev/null; echo $?;cd ..;rm -rf new/;cd $start
