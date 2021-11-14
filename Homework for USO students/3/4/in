@@ -1,0 +1,1 @@
+location=$(pwd);cd /home/student/tema2/task2/USO-TEMA-2;make clean &>/dev/null;echo $?;cd $(location)

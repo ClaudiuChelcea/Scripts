@@ -1,0 +1,1 @@
+timp=$(cat '/home/student/tema2/task1/conexiune_web.txt' | grep time | cut -d " " -f10);timp_int=${timp::-2};if [[ $timp_int -le 7000 || $timp_int -gt 10000 ]];then echo 1;fi

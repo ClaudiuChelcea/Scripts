@@ -1,0 +1,1 @@
+location=$(pwd);cd /home/student/tema2/task2/USO-TEMA-2;x1=$(make); x2=$(make); x3=$(make); if [[ $x2 == $x3 ]]; then echo $x2 | grep "Nothing" > /dev/null; if [[ $? -eq 0 ]]; then echo 0; else echo 1; fi;else echo 1; fi;cd $(location)

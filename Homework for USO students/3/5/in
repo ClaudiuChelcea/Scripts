@@ -1,0 +1,1 @@
+location=$(pwd);cd /home/student/tema2/task2/USO-TEMA-2;if [[ $(ls -lh | grep *.o | wc -l) -gt 0 ]]; then echo 1; else echo 0; fi;cd $(location)

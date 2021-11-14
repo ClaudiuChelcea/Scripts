@@ -1,0 +1,1 @@
+grep inet '/home/student/tema2/task1/conexiune_internet.txt'; echo $?

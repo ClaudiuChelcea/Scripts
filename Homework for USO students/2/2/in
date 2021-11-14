@@ -1,0 +1,1 @@
+diff -q /home/student/tema2/task2/USO-TEMA-2/ USO-TEMA-2/ &> /dev/null; echo $?
