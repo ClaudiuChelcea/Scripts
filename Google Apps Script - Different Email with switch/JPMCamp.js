@@ -143,57 +143,57 @@ function count_duplicate(spreadsheet, participant_row, last_row) {
 function send_email(spreadsheet, participant_row) {
   var template_default = get_body_template();
   var template_jpm = get_body_template_jpm();
-  template_default.replace("[[NAME]]", get_name(spreadsheet, participant_row));
-  template_jpm.replace("[[NAME]]", get_name(spreadsheet, participant_row));
+  template_default = template_default.replaceAll("[[NAME]]", get_name(spreadsheet, participant_row));
+  template_jpm = template_jpm.replaceAll("[[NAME]]", get_name(spreadsheet, participant_row));
 
 
   switch(spreadsheet.getRange(participant_row, team_position).getValue().toString()) {
     case "PROUD":
-      template_default.replace("[[NUMEPROIECT]]", "PRoud");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "PRoud");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
-    case "Upgrade":
-      template_default.replace("[[NUMEPROIECT]]", "UPgrade");
+    case "UPGRADE":
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "UPgrade");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
     case "IT":
-      template_default.replace("[[NUMEPROIECT]]", "IT is Business");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "IT is Business");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
     case "EVENTUM":
-      template_default.replace("[[NUMEPROIECT]]", "EVENTUM");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "EVENTUM");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
     case "IT PM":
-      template_default.replace("[[NUMEPROIECT]]", "IT is Business");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "IT is Business");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
     case "IT JPM":
-      template_jpm.replace("[[NUMEPROIECT]]", "IT is Business");
+      template_jpm = template_jpm.replaceAll("[[NUMEPROIECT]]", "IT is Business");
       deliver_email(spreadsheet, participant_row, template_jpm);
       break;
     case "UPGRADE PM":
-      template_default.replace("[[NUMEPROIECT]]", "UPgrade");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "UPgrade");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
     case "UPGRADE JPM":
-      template_jpm.replace("[[NUMEPROIECT]]", "UPgrade");
+      template_jpm = template_jpm.replaceAll("[[NUMEPROIECT]]", "UPgrade");
       deliver_email(spreadsheet, participant_row, template_jpm);
       break;
     case "PROUD PM":
-      template_default.replace("[[NUMEPROIECT]]", "PRoud");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "PRoud");
       deliver_email(spreadsheet, participant_row, template_default);
       break;
     case "PROUD JPM":
-      template_jpm.replace("[[NUMEPROIECT]]", "PRoud");
+      template_jpm = template_jpm.replaceAll("[[NUMEPROIECT]]", "PRoud");
       deliver_email(spreadsheet, participant_row, template_jpm);
       break;
     case "EVENTUM PM":
-      template_default.replace("[[NUMEPROIECT]]", "EVENTUM");
+      template_default = template_default.replaceAll("[[NUMEPROIECT]]", "EVENTUM");
       deliver_email(spreadsheet, participant_row, template_default); 
       break;
     case "EVENTUM JPM":
-      template_jpm.replace("[[NUMEPROIECT]]", "EVENTUM");
+      template_jpm = template_jpm.replaceAll("[[NUMEPROIECT]]", "EVENTUM");
       deliver_email(spreadsheet, participant_row, template_jpm); 
       break;
     default:
