@@ -1,0 +1,304 @@
+// Excel fields columns counting from 1
+var email_position = 8;
+var firstname_position = 1;
+var yesno_position = 9;
+var sheet_name="Foaie1";
+var test_sheet_name="Foaie2";
+
+// Email
+var EMAIL_SUBJECT = "Logiscool [[SECTOR]] – feedback [[NUME]]";
+
+// Main function
+function sendEmail() {
+
+  // ACTIVATE THE "Sheet1" SHEET AND MAKE IT THE PRINCIPAL ONE
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheet_name).activate();
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // GET THE INDEX OF THE LAST ROW
+  var last_row = spreadsheet.getLastRow();
+
+  // Check if we can still send emails today
+  if(check_emails_status() == 1) {
+    return;
+  }
+
+  // SEND AN EMAIL TO EVERY PARTICIPANT
+  for(var participant_row = 2; participant_row <= last_row; ++participant_row) {
+
+    // Check if we didn't already send an email to that person
+    if(check_already_sent(spreadsheet, participant_row) == 1) {
+      continue;
+    }
+
+    // Check duplicate
+    if(participant_row < last_row && get_email(spreadsheet,participant_row).localeCompare(get_email(spreadsheet,participant_row+1)) == 0)
+      continue;
+    
+    // Check if we have emails left to send in the google's limits
+    if(MailApp.getRemainingDailyQuota() <= 0) {
+      log_errors();
+      break;
+    }
+
+    // Verificare grupa
+    var grupa = spreadsheet.getRange(participant_row, 2).getValue()
+    var grupa = grupa.split(' ').shift();
+    if(grupa.localeCompare("Python") == 0 || grupa.localeCompare("Kodu") == 0 || grupa.localeCompare("Robo")== 0|| grupa.localeCompare("B6")== 0)
+      continue;
+
+    // Send the emails
+    send_email(spreadsheet, participant_row);
+
+    // Mark the person as someone who has received the email to not receive another one
+    spreadsheet.getRange(participant_row, yesno_position).setValue("YES");
+
+    // Mark duplicates as sent as well
+    var nr_of_duplicates = count_duplicate(spreadsheet, participant_row, last_row);
+    for(var i=1; i<=nr_of_duplicates;i++) {
+        var get_value = spreadsheet.getRange(participant_row,yesno_position).getValue();
+        spreadsheet.getRange(participant_row - i, yesno_position).setValue(get_value);
+      }
+
+  } // end loop
+}
+
+// Main function
+function sendTest() {
+
+  // ACTIVATE THE "Sheet1" SHEET AND MAKE IT THE PRINCIPAL ONE
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName(test_sheet_name).activate();
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // GET THE INDEX OF THE LAST ROW
+  var last_row = spreadsheet.getLastRow();
+
+  // Check if we can still send emails today
+  if(check_emails_status() == 1) {
+    return;
+  }
+
+  // SEND AN EMAIL TO EVERY PARTICIPANT
+  for(var participant_row = 2; participant_row <= last_row; ++participant_row) {
+
+    // Check if we didn't already send an email to that person
+    if(check_already_sent(spreadsheet, participant_row) == 1) {
+      continue;
+    }
+
+    // Check duplicate
+    if(participant_row < last_row && get_email(spreadsheet,participant_row).localeCompare(get_email(spreadsheet,participant_row+1)) == 0)
+      continue;
+    
+    // Check if we have emails left to send in the google's limits
+    if(MailApp.getRemainingDailyQuota() <= 0) {
+      log_errors();
+      break;
+    }
+
+    // Verificare grupa
+    var grupa = spreadsheet.getRange(participant_row, 2).getValue()
+    var grupa = grupa.split(' ').shift();
+    if(grupa.localeCompare("Python") == 0 || grupa.localeCompare("Kodu") == 0 || grupa.localeCompare("Robo")== 0|| grupa.localeCompare("B6")== 0)
+      continue;
+
+    // Send the emails
+    send_email(spreadsheet, participant_row);
+
+    // Mark the person as someone who has received the email to not receive another one
+    spreadsheet.getRange(participant_row, yesno_position).setValue("YES");
+
+    // Mark duplicates as sent as well
+    var nr_of_duplicates = count_duplicate(spreadsheet, participant_row, last_row);
+    for(var i=1; i<=nr_of_duplicates;i++) {
+        var get_value = spreadsheet.getRange(participant_row,yesno_position).getValue();
+        spreadsheet.getRange(participant_row - i, yesno_position).setValue(get_value);
+      }
+
+  } // end loop
+}
+
+// Check how many emails we can send today
+// The limit for Google Scripts is 100 emails / 24h!
+function check_emails_left() {
+  var EMAILS_ABLE_TO_SEND_TODAY_LEFT = MailApp.getRemainingDailyQuota();
+  Logger.log("Emails left for today: " + EMAILS_ABLE_TO_SEND_TODAY_LEFT.toString());
+  return EMAILS_ABLE_TO_SEND_TODAY_LEFT;
+}
+
+
+// Check if we can still send emails today
+function check_emails_status() {
+  var EMAILS_ABLE_TO_SEND_TODAY_LEFT = check_emails_left();
+  if(EMAILS_ABLE_TO_SEND_TODAY_LEFT == 0) {
+    Logger.log("Warning. No more emails to send today! Limit reached!");
+    Browser.msgBox("Warning. No more emails to send today! Limit reached!");
+    return 1;
+  }
+  else {
+    return 0;
+  }
+}
+
+
+// Get person's email
+function get_email(spreadsheet, participant_row) {
+  //                               ROW        , COLUMN
+  return spreadsheet.getRange(participant_row, email_position).getValue();
+}
+
+
+// Get person's name
+function get_name(spreadsheet, participant_row) {
+  return spreadsheet.getRange(participant_row, firstname_position).getValue();
+}
+
+
+// Dont send the same email to the same person
+function check_already_sent(spreadsheet, participant_row) {
+  var bool_alreadySentEmail = spreadsheet.getRange(participant_row, yesno_position).getValue();
+  if(bool_alreadySentEmail.toString().toUpperCase() == "YES") {
+    Logger.log("Skipped " + spreadsheet.getRange(participant_row, email_position).getValue());
+    return 1.
+  }
+  else {
+    Logger.log("Sending to " + spreadsheet.getRange(participant_row, email_position).getValue());
+    return 0;
+  }
+}
+
+
+// Create email subject
+function get_subject(spreadsheet, participant_row) {
+  var subject = EMAIL_SUBJECT;
+  subject = subject.replace("[[SECTOR]]", "Militari")
+  subject = subject.replace("[[NUME]]", get_name(spreadsheet, participant_row))
+  return subject;
+}
+
+
+// Display error if we can no longer send emails today
+function log_errors() {
+  Logger.log("Warning. No more emails to send today! Limit reached! The person who is yet to receive the email is " + NAME + "!");
+  Browser.msgBox("Warning. No more emails to send today! Limit reached! The person who is yet to receive the email is " + NAME + "!");
+}
+
+
+// Send the email to each person
+function send_email(spreadsheet, participant_row, img1) {
+  MailApp.sendEmail({
+      to: get_email(spreadsheet, participant_row),
+      subject: get_subject(spreadsheet, participant_row),
+      body: "",
+      htmlBody: get_body(get_name(spreadsheet, participant_row), spreadsheet, participant_row),
+    });
+}
+
+
+// Check for duplicate entry in the excel sheet
+function count_duplicate(spreadsheet, participant_row, last_row) {
+  var duplicates = 0;
+  var counter = 1;
+  for(var i = participant_row; i >=0 ; i--)
+    if(get_email(spreadsheet, participant_row).localeCompare(get_email(spreadsheet, participant_row - counter)) == 0) {
+      duplicates++;
+      counter++;
+    }
+    else
+      break;
+  
+  return duplicates;
+}
+
+
+// Create email body
+function get_body(NAME, spreadsheet, participant_row) {
+  var body = "Bine te-am regăsit,<br><br>Ne bucurăm să îți trimitem, împreună cu echipa de traineri Logiscool [[SECTOR]] un feedback despre [[PRENUME]] și parcursul alături de noi în acest semestru. Stim că este important pentru tine să înțelegi ce învață copiii la Logiscool și de ce sunt atât de încântați după fiecare sesiune. Lumea digitală aduce o mulțime de beneficii, de la dobândirea de cunoștințe practice în orice domeniu, până la dezvoltarea abilităților cognitive. <br><br>Ce a realizat [[PRENUME]] alături de noi în aceste luni?<br>";
+
+  var grupa = spreadsheet.getRange(participant_row, 2).getValue();
+  var grupa = grupa.split(' ').shift();
+  var realizari = "";
+
+  if(grupa.localeCompare("A1") == 0) {
+    realizari = "<ul><li>A învățat să facă personaje din Scoolcode să se miște și să vorbească.</li><li>A î0nvățat să utilizeze bucle, astfel încât să nu fie nevoie să programeze același lucru de mai multe ori.</li><li>A învățat despre instrucțiuni condiționale, astfel încât personajele să se comporte diferit, în funcție de circumstanțe.</li><li>S-a familiarizat cu variabilele pentru a memora diferite tipuri de date.</li></ul>";
+  } else if(grupa.localeCompare("A2") == 0) {
+    realizari = "<ul><li>A aprofundat cunoștințele despre variabile</li><li>A introdus noi posibilități prin utilizarea variabilelor încorporate din Scoolcode</li><li>A învățat cum poate măsura timpul în jocurile sale</li><li>A utilizat operatorii logici de bază (și, sau, nu) care ne permit să creăm condiții mai complexe</li></ul>";
+  } else if(grupa.localeCompare("A3") == 0) {
+    realizari = "<ul><li>A mărit dimensiunile ecranului de joc la o scenă mult mai mare, cu dimensiunile de 640x360(pași).</li><li>S-a familiarizat cu noile evenimente, care ne permit să creăm jocuri mai complexe.</li><li>A utilizat principii matematice importante.</li><li>A învățat efecte pentru culori și a introdus conceptul de paralaxă, care ajută la crearea de jocuri mai spectaculoase.</li></ul>";
+  } else if(grupa.localeCompare("A4") == 0) {
+    realizari = "<ul><li>A învățat modul în care personajele comunică între ele folosind semnale.</li><li>A creat clone ale personajelor, lucru care permite dezvoltarea jocurilor din ce în ce mai complexe.</li><li>A aflat că, uneori, valoarea unei variabile nu poate fi modificată de către orice personaj.</li><li>A  dezvoltat proiecte din ce în ce mai complexe, utilizând tot ce ai învățat până acum</li></ul>";
+  } else if(grupa.localeCompare("A5") == 0) {
+    realizari = "<ul><li>A învățat să utilizeze sistemul de coordonate carteziene, inclusiv valorile sale negative</li><li>A aflat despre conceptul de liste, unde putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători </li><li>A exersat gestionarea textelor pentru a se pregăti pentru programarea bazată pe text</li><li>A aprofundat cunoștințele pe care le-ai obținut până acum</li></ul>";
+  } else if(grupa.localeCompare("B1") == 0) {
+    realizari = "<ul><li>A învățat să facă personaje din Scoolcode să se miște și să vorbească. </li><li>A utilizat bucle, astfel încât să nu fie nevoie să programeze același lucru de mai multe ori.</li><li>A învățat despre instrucțiuni condiționale, astfel încât personajele să se comporte diferit, în funcție de circumstanțe.</li><li>S-a familiarizat cu variabilele, cu ajutorul cărora se pot stoca date și a înțeles operatorii logici de bază (și, sau nu) care permit crearea condițiilor specifice.</li></ul>";
+  } else if(grupa.localeCompare("B2") == 0) {
+    realizari = "<ul><li>A mărit dimensiunile ecranului de joc la o scenă mult mai mare, cu dimensiunile de 640x360(pași).</li><li>S-a familiarizat cu noile evenimente, care ne permit să creăm jocuri mai complexe.</li><li>A utilizat principii matematice importante.</li><li>A învățat efecte pentru culori și a introdus conceptul de paralaxă, care ajută la crearea de jocuri mai spectaculoase.</li></ul>";
+  } else if(grupa.localeCompare("B3") == 0) {
+    realizari = "<ul><li>A învățat modul în care personajele comunică între ele folosind semnale.</li><li>A creat clone ale personajelor, lucru care permite dezvoltarea jocurilor din ce în ce mai complexe.</li><li>A aflat că, uneori, valoarea unei variabile nu poate fi modificată de către orice personaj.</li><li>A  dezvoltat proiecte din ce în ce mai complexe, utilizând tot ce ai învățat până acum</li></ul>";
+  } else if(grupa.localeCompare("B4") == 0) {
+    realizari = "<ul><li>A învățat să utilizeze sistemul de coordonate carteziene, inclusiv valorile sale negative</li><li>A aflat despre conceptul de liste, unde putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători </li><li>A exersat gestionarea textelor pentru a se pregăti pentru programarea bazată pe text</li><li>A aprofundat cunoștințele pe care le-ai obținut până acum</li></ul>";
+  } else if(grupa.localeCompare("B5") == 0) {
+    realizari = "A învățat să facă computerul să calculeze valorile minime, maxime și medii.</li><li>A învățat despre stive.</li><li>A aflat despre diferiți algoritmi de căutare, începând cu căutarea liniară.</li><li>A introdus algoritmii de sortare, precum algoritmul \"exchange\" sau \"bubble sort\"</li></ul>";
+  } else if(grupa.localeCompare("B6") == 0) {
+    realizari = "<ul><li>A învățat conceptul de recursivitate, prin desen. A învățat despre secvențele matematice și a dezvoltat jocuri.</li><li>A creat labirinturi aleatorii folosind algoritmul \"backtrack\".</li><li>A învățat despre matrici și a creat diferite jocuri cu acestea .</li><li>A creat jocuri din ce în ce mai complexe</li></ul>";
+  } else if(grupa.localeCompare("C1") == 0) {
+    realizari = "<ul><li>A învățat să facă personajele din Scoolcode să se miște și să vorbească.</li><li>A utlizat bucle, astfel încât să nu fie nevoie să programeze același lucru de mai multe ori.</li><li>A învățat despre despre instrucțiuni condiționale, astfel încât personajele să se comporte diferit, în funcție de circumstanțe.</li><li>S-a familiarizat cu variabilele, cu ajutorul cărora se pot stoca date și a înțeles operatorii logici de bază (și, sau nu) care permit crearea condițiilor specifice.</li></ul>";
+  } else if(grupa.localeCompare("C2") == 0) {
+    realizari = "<ul><li>A învățat modul în care personajele comunică între ele folosind semnale.</li><li>A creat clone ale personajelor, lucru care permite dezvoltarea jocurilor din ce în ce mai complexe .</li><li>A aflat că, uneori, valoarea unei variabile nu poate fi modificată de către orice personaj.</li><li>A făcut cunoștință cu conceptul de liste, în care putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători</li></ul>";
+  } else if(grupa.localeCompare("C3") == 0) {
+    realizari = "A început să foloseasca programarea bazată pe text.</li><li>A introdus bucla do-while și a comparat-o cu bucla while .</li><li>A învățat despre funcții și diferitele tipuri ale acestora.</li><li>A văzut cum funcționează unii factori fizici, cum ar fi gravitația sau forțele de frecare</li></ul>";
+  }
+  
+  body += realizari;
+
+  var continuare = "<br><br>În contul <a href=\"https://my.logiscool.com/app/news\">MyLogiscool<\/a> la secțiunea “Profilul Meu” veți  găsi diploma Logiscool de finalizare a acestui modul de programare care include informațiile de mai sus. <br><br>Ce va învăța în semestrul următor?"
+
+  body += continuare;
+
+  if(grupa.localeCompare("A1") == 0) {
+    realizari = "<ul><li>A aprofundat cunoștințele despre variabile</li><li>A introdus noi posibilități prin utilizarea variabilelor încorporate din Scoolcode</li><li>A învățat cum poate măsura timpul în jocurile sale</li><li>A utilizat operatorii logici de bază (și, sau, nu) care ne permit să creăm condiții mai complexe</li></ul>";
+  } else if(grupa.localeCompare("A2") == 0) {
+    realizari = "<ul><li>A mărit dimensiunile ecranului de joc la o scenă mult mai mare, cu dimensiunile de 640x360(pași).</li><li>S-a familiarizat cu noile evenimente, care ne permit să creăm jocuri mai complexe.</li><li>A utilizat principii matematice importante.</li><li>A învățat efecte pentru culori și a introdus conceptul de paralaxă, care ajută la crearea de jocuri mai spectaculoase.</li></ul>";
+  } else if(grupa.localeCompare("A3") == 0) {
+    realizari = "<ul><li>A învățat modul în care personajele comunică între ele folosind semnale.</li><li>A creat clone ale personajelor, lucru care permite dezvoltarea jocurilor din ce în ce mai complexe.</li><li>A aflat că, uneori, valoarea unei variabile nu poate fi modificată de către orice personaj.</li><li>A  dezvoltat proiecte din ce în ce mai complexe, utilizând tot ce ai învățat până acum</li></ul>";
+  } else if(grupa.localeCompare("A4") == 0) {
+    realizari = "<ul><li>A învățat să utilizeze sistemul de coordonate carteziene, inclusiv valorile sale negative</li><li>A aflat despre conceptul de liste, unde putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători </li><li>A exersat gestionarea textelor pentru a se pregăti pentru programarea bazată pe text</li><li>A aprofundat cunoștințele pe care le-ai obținut până acum</li></ul>";
+  } else if(grupa.localeCompare("A5") == 0) {
+    realizari = "<ul><li>A învățat să utilizeze sistemul de coordonate carteziene, inclusiv valorile sale negative</li><li>A aflat despre conceptul de liste, unde putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători </li><li>A exersat gestionarea textelor pentru a se pregăti pentru programarea bazată pe text</li><li>A aprofundat cunoștințele pe care le-ai obținut până acum</li></ul>";
+  } else if(grupa.localeCompare("B1") == 0) {
+    realizari = "<ul><li>A mărit dimensiunile ecranului de joc la o scenă mult mai mare, cu dimensiunile de 640x360(pași).</li><li>S-a familiarizat cu noile evenimente, care ne permit să creăm jocuri mai complexe.</li><li>A utilizat principii matematice importante.</li><li>A învățat efecte pentru culori și a introdus conceptul de paralaxă, care ajută la crearea de jocuri mai spectaculoase.</li></ul>";
+  } else if(grupa.localeCompare("B2") == 0) {
+    realizari = "<ul><li>A învățat modul în care personajele comunică între ele folosind semnale.</li><li>A creat clone ale personajelor, lucru care permite dezvoltarea jocurilor din ce în ce mai complexe.</li><li>A aflat că, uneori, valoarea unei variabile nu poate fi modificată de către orice personaj.</li><li>A  dezvoltat proiecte din ce în ce mai complexe, utilizând tot ce ai învățat până acum</li></ul>";
+  } else if(grupa.localeCompare("B3") == 0) {
+    realizari = "<ul><li>A învățat să utilizeze sistemul de coordonate carteziene, inclusiv valorile sale negative</li><li>A aflat despre conceptul de liste, unde putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători </li><li>A exersat gestionarea textelor pentru a se pregăti pentru programarea bazată pe text</li><li>A aprofundat cunoștințele pe care le-ai obținut până acum</li></ul>";;
+  } else if(grupa.localeCompare("B4") == 0) {
+    realizari = "A învățat să facă computerul să calculeze valorile minime, maxime și medii.</li><li>A învățat despre stive.</li><li>A aflat despre diferiți algoritmi de căutare, începând cu căutarea liniară.</li><li>A introdus algoritmii de sortare, precum algoritmul \"exchange\" sau \"bubble sort\"</li></ul>";
+  } else if(grupa.localeCompare("B5") == 0) {
+    realizari = "<ul><li>A învățat conceptul de recursivitate, prin desen. A învățat despre secvențele matematice și a dezvoltat jocuri.</li><li>A creat labirinturi aleatorii folosind algoritmul \"backtrack\".</li><li>A învățat despre matrici și a creat diferite jocuri cu acestea .</li><li>A creat jocuri din ce în ce mai complexe</li></ul>";
+  } else if(grupa.localeCompare("B6") == 0) {
+    realizari = "<ul><li>A învățat conceptul de recursivitate, prin desen. A învățat despre secvențele matematice și a dezvoltat jocuri.</li><li>A creat labirinturi aleatorii folosind algoritmul \"backtrack\".</li><li>A învățat despre matrici și a creat diferite jocuri cu acestea .</li><li>A creat jocuri din ce în ce mai complexe</li></ul>";
+  } else if(grupa.localeCompare("C1") == 0) {
+    realizari = "<ul><li>A învățat modul în care personajele comunică între ele folosind semnale.</li><li>A creat clone ale personajelor, lucru care permite dezvoltarea jocurilor din ce în ce mai complexe .</li><li>A aflat că, uneori, valoarea unei variabile nu poate fi modificată de către orice personaj.</li><li>A făcut cunoștință cu conceptul de liste, în care putem stoca date pentru a crea, spre exemplu, o listă cu cei mai buni jucători</li></ul>";
+  } else if(grupa.localeCompare("C2") == 0) {
+    realizari = "<ul><li>A început să foloseasca programarea bazată pe text.</li><li>A introdus bucla do-while și a comparat-o cu bucla while .</li><li>A învățat despre funcții și diferitele tipuri ale acestora.</li><li>A văzut cum funcționează unii factori fizici, cum ar fi gravitația sau forțele de frecare</li></ul>";
+  } else if(grupa.localeCompare("C3") == 0) {
+    realizari = "<ul><li>A învățat să facă computerul să calculeze valorile minime, maxime și medii.</li><li>A învățat despre stive.</li><li>A aflat despre diferiți algoritmi de căutare, începând cu căutarea liniară.</li><li>A introdus algoritmii de sortare, precum algoritmul \"exchange\" sau \"bubble sort\" </li></ul>";
+  }
+
+  body += realizari;
+
+  var next = "<br><br>Ne dorim ca abilitățile dobândite să îi fie utile pe viitor și să le aplice cu succes. Din punct de vedere al competențelor sociale, am remarcat la [[PRENUME]]:<br><ul><li>" + spreadsheet.getRange(participant_row, 4).getValue() + "</li><li>" + spreadsheet.getRange(participant_row, 5).getValue() + "</li><li>" + spreadsheet.getRange(participant_row, 6).getValue() + "</li><li>" + spreadsheet.getRange(participant_row, 7).getValue() + "</li></ul>";
+
+  body += next;
+
+  next = "<br><br>Unicitatea este una dintre calitatile pe care le apreciem cel mai mult la elevii nostri iar [[PRENUME]] a reusit in timpul petrecut alaturi de noi sa se remarce ca fiind " + spreadsheet.getRange(participant_row, 3).getValue() + " elev.<br><br>Vă așteptăm cu drag să continuăm împreună educația digitală în semestrul următor. Am aprecia dacă ne-ați lăsa un review pe pagina de Facebook <a href=\"https://www.facebook.com/LogiscoolMilitari/\">aici</a> sau pe Google <a href=\"https://www.google.com/maps/place/Logiscool+Militari/@44.443377,26.0523239,12z/data=!4m5!3m4!1s0x0:0xb3955a150aa2c0e8!8m2!3d44.4365992!4d26.0287415\">aici</a>. Vă mulțumim!"
+
+  body +=next;
+
+  var tmp = "<br><br><h1><font color=\"blue\">Maria-Alexandra Drugă</font></h1><br>Asistent Manager<br><b>Logiscool Militari</b><br>maria.druga@logiscool.com |+0728690398<br><a href=\"www.logiscool.com/ro/school/militari\">www.logiscool.com/ro/school/militari<\/a> | Strada Dealul Tugulea, nr. 3C, sector 6, București";
+
+  body += tmp;
+  body = body.replaceAll("[[PRENUME]]", spreadsheet.getRange(participant_row, 1).getValue().split(' ').shift());
+  body = body.replaceAll("[[SECTOR]]", "Militari");
+  return body;
+}
